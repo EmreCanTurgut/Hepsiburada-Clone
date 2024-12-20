@@ -9,8 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@reduxjs/toolkit": "^2.5.0",
     "neonctl": "^2.6.0",
+=======
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^6.2.1",
+>>>>>>> 854674288d8e203fd2f665f4e057cb3a1631d61d
     "next": "15.1.0",
     "pg": "^8.13.1",
     "react": "^19.0.0",
