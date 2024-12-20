@@ -5,8 +5,6 @@ interface ProductCardProps {
     image: string;
     label?: string;
     title: string;
-    rating: number;
-    reviewCount: number;
     price: number;
     oldPrice?: number;
     discountInfo?: string;
@@ -16,8 +14,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
     image,
     label,
     title,
-    rating,
-    reviewCount,
     price,
     oldPrice,
     discountInfo,
@@ -48,13 +44,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 alt={title}
                 className="w-full h-40 object-contain mt-2"
             />
-            <div className="flex items-center mt-2 text-yellow-500">
-                {'★'.repeat(Math.floor(rating))}
-                {'☆'.repeat(5 - Math.floor(rating))}
-                <span className="text-gray-500 text-xs ml-2">
-                    ({reviewCount})
-                </span>
-            </div>
             <div className="mt-2">
                 <span className="text-lg font-bold text-green-600">
                     {price} TL
