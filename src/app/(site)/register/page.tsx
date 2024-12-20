@@ -1,19 +1,60 @@
 "use client";
+import registerSlice from "@/store/Slices/registerSlice";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const Home: React.FC = () => {
-  const [emailOrPhone, setEmailOrPhone] = useState("");
+  const dispatch = useDispatch();
+  const register = useSelector((state: any) => state.register);
+  const [PhoneNumber, setPhoneNumber] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!emailOrPhone || !name || !password || !email) {
+    if (!PhoneNumber || !name || !password || !email) {
       alert("Lütfen tüm alanları doldurun.");
       return;
     }
     alert("Form başarıyla gönderildi!");
+  };
+
+  const nameChangeHandler = (e: any) => {
+    dispatch(registerSlice.actions.userNameChangeHander(e.currentTarget.value));
+    setName(e.currentTarget.value);
+  };
+  const PhoneNumberChangeHandler = (e: any) => {
+    dispatch(
+      registerSlice.actions.userPhoneNumberChangeHandler(e.currentTarget.value)
+    );
+    setPhoneNumber(e.currentTarget.value);
+  };
+  const PasswordChangeHandler = (e: any) => {
+    dispatch(
+      registerSlice.actions.userPasswordChangeHandler(e.currentTarget.value)
+    );
+    setPassword(e.currentTarget.value);
+  };
+  const EmailChangeHandler = (e: any) => {
+    dispatch(
+      registerSlice.actions.userEmailChangeHandler(e.currentTarget.value)
+    );
+    setEmail(e.currentTarget.value);
+  };
+  const KayıtOl = async () => {
+    const response = await fetch("http://localhost:3000/api/customer", {
+      method: "POST",
+      body: JSON.stringify({
+        action: "register",
+        name: register.userName,
+        email: register.userEmail,
+        password: register.userPassword,
+        phone: register.userPhoneNumber,
+      }),
+    });
+    const data = await response.json();
+    console.log(data);
   };
 
   return (
@@ -26,24 +67,24 @@ const Home: React.FC = () => {
           {/* Telefon Numarası veya E-posta */}
           <div className="mb-4">
             <label
-              htmlFor="emailOrPhone"
+              htmlFor="PhoneNumber"
               className="block mb-2 text-sm font-medium text-gray-700"
             >
-              E-posta adresi veya GSM numarası
+              GSM numarası
             </label>
             <input
               type="text"
-              id="emailOrPhone"
+              id="PhoneNumber"
               className={`w-full px-4 py-2 border ${
-                !emailOrPhone
+                !PhoneNumber
                   ? "border-red-500 bg-red-50"
                   : "border-gray-300 bg-white"
               } rounded focus:outline-none focus:ring-2 focus:ring-orange-500`}
               placeholder="Telefon numaranızı girin"
-              value={emailOrPhone}
-              onChange={(e) => setEmailOrPhone(e.target.value)}
+              value={PhoneNumber}
+              onChange={PhoneNumberChangeHandler}
             />
-            {!emailOrPhone && (
+            {!PhoneNumber && (
               <p className="mt-1 text-sm text-red-600">
                 Bu alan boş bırakılamaz.
               </p>
@@ -66,10 +107,12 @@ const Home: React.FC = () => {
               } rounded focus:outline-none focus:ring-2 focus:ring-orange-500`}
               placeholder="İsminizi girin"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={nameChangeHandler}
             />
             {!name && (
-              <p className="mt-1 text-sm text-red-600">Bu alan boş bırakılamaz.</p>
+              <p className="mt-1 text-sm text-red-600">
+                Bu alan boş bırakılamaz.
+              </p>
             )}
           </div>
 
@@ -91,7 +134,7 @@ const Home: React.FC = () => {
               } rounded focus:outline-none focus:ring-2 focus:ring-orange-500`}
               placeholder="Şifrenizi girin"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={PasswordChangeHandler}
             />
             {!password && (
               <p className="mt-1 text-sm text-red-600">
@@ -116,7 +159,7 @@ const Home: React.FC = () => {
               } rounded focus:outline-none focus:ring-2 focus:ring-orange-500`}
               placeholder="E-posta adresinizi girin"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={EmailChangeHandler}
             />
             {!email && (
               <p className="mt-1 text-sm text-red-600">
@@ -129,30 +172,22 @@ const Home: React.FC = () => {
           <button
             type="submit"
             className="w-full px-4 py-2 font-bold text-white bg-orange-500 rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-opacity-75"
+            onClick={KayıtOl}
           >
             Devam et
           </button>
         </form>
         <p className="mt-4 text-xs text-center text-gray-500">
           Kişisel verileriniz,{" "}
-          <a
-            href="#"
-            className="text-orange-500 underline hover:no-underline"
-          >
+          <a href="#" className="text-orange-500 underline hover:no-underline">
             Aydınlatma Metni
           </a>{" "}
           kapsamında işlenmektedir. “Devam et” butonuna basarak{" "}
-          <a
-            href="#"
-            className="text-orange-500 underline hover:no-underline"
-          >
+          <a href="#" className="text-orange-500 underline hover:no-underline">
             Üyelik Sözleşmesi
           </a>{" "}
           ve{" "}
-          <a
-            href="#"
-            className="text-orange-500 underline hover:no-underline"
-          >
+          <a href="#" className="text-orange-500 underline hover:no-underline">
             Gizlilik Politikası
           </a>
           ’nı okuduğunuzu ve kabul ettiğinizi onaylıyorsunuz.
