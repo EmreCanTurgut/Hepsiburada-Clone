@@ -1,5 +1,5 @@
-// ProductCard.tsx
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 
 interface ProductCardProps {
     image: string;
@@ -34,7 +34,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
     return (
         <div
-            className="border rounded-lg shadow-sm p-4 bg-white w-64"
+            className="border rounded-lg shadow-sm p-4 bg-white w-64 h-[380px]"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
@@ -48,7 +48,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 alt={title}
                 className="w-full h-40 object-contain mt-2"
             />
-            <h3 className="text-sm font-medium mt-2">{title}</h3>
             <div className="flex items-center mt-2 text-yellow-500">
                 {'★'.repeat(Math.floor(rating))}
                 {'☆'.repeat(5 - Math.floor(rating))}
@@ -72,9 +71,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 </div>
             )}
             {isHovered && (
-                <button className="mt-3 bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 w-full">
+                <motion.button
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 40, opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                    className="mt-3 bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 w-full"
+                >
                     Sepete Ekle
-                </button>
+                </motion.button>
             )}
         </div>
     );
