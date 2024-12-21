@@ -5,7 +5,8 @@ import { RiAccountCircleLine } from "react-icons/ri";
 import { FaShoppingCart } from "react-icons/fa";
 import { useDispatch } from 'react-redux';
 import homeSlice from '@/store/Slices/home';
-import ProfileModal from '../products/profileModal';
+import ProfileModal from '../home/profileModal';
+import SettingsModal from '../home/settings';
 
 
 
@@ -19,12 +20,16 @@ const Nav = () => {
     const profileModalOpen=()=>{
         dispatch(homeSlice.actions.isProfileModalOpenedChangeHandler(true))
     }
+    const settingsModalOpen=()=>{
+        dispatch(homeSlice.actions.isSettingsModalOpened(true))
+    }
 
     return (
         <nav className="bg-gray-200 text-white px-12 py-2 flex justify-between items-center ">
             <div className="text-xl font-bold text-orange-500">Hepsiburada</div>
             <div className="flex gap-8 text-gray-700">
                 <ProfileModal/>
+                <SettingsModal/>
                 <Link
                     href={'discount'}
                     className="hover:underline underline-offset-2"
@@ -59,6 +64,7 @@ const Nav = () => {
                                 Profile
                             </li>
                             <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                            onClick={settingsModalOpen}
                             >
                                 Settings
                             </li>

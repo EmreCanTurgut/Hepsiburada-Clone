@@ -14,7 +14,7 @@ const homeSlice = createSlice({
     },
     isSettingsModalOpened(state,action){
       state.isSettingsModalOpened=action.payload;
-    }
+    },
     
   },
 });
