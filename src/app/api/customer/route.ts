@@ -1,11 +1,32 @@
 import pool from '@/service/database';
 import { NextResponse, NextRequest } from 'next/server';
+import jwt from 'jsonwebtoken';
+
+const SECRET_KEY = process.env.JWT_SECRET!;
+
+function getUserIdFromToken(req: NextRequest): {
+    valid: boolean;
+    userId?: number;
+    message?: string;
+} {
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return { valid: false, message: 'No token provided' };
+    }
+
+    const token = authHeader.split(' ')[1];
+    try {
+        const decoded = jwt.verify(token, SECRET_KEY) as { id: number };
+        return { valid: true, userId: decoded.id };
+    } catch (error) {
+        return { valid: false, message: 'Invalid or expired token' };
+    }
+}
 
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { action, name, email, password, newPassword, phone, userId } =
-            body;
+        const { action, name, email, password, newPassword, phone } = body;
 
         const pg = await pool.connect();
 
@@ -28,38 +49,9 @@ export async function POST(req: NextRequest) {
                 },
                 { status: 201 }
             );
-        } else if (action === 'delete') {
-            const response = await pg.query(
-                `DELETE FROM public.customer WHERE id = $1 RETURNING *`,
-                [userId]
-            );
-            return NextResponse.json(
-                { message: 'User deleted successfully', data: response.rows },
-                { status: 200 }
-            );
-        } else if (action === 'findByEmail') {
-            const response = await pg.query(
-                `SELECT * FROM public.customer WHERE email = $1`,
-                [email]
-            );
-            return NextResponse.json(
-                { message: 'User found', data: response.rows },
-                { status: 200 }
-            );
-        } else if (action === 'updatePasswd') {
-            const result = await pg.query(
-                `UPDATE public.customer
-         SET password = $1
-         WHERE email = $2 AND password = $3
-         RETURNING *`,
-                [newPassword, email, password]
-            );
-            return NextResponse.json(
-                { message: 'Password updated successfully', data: result.rows },
-                { status: 200 }
-            );
-        } else if (action === 'login') {
-            console.log(email, password);
+        }
+
+        if (action === 'login') {
             const response = await pg.query(
                 `SELECT * FROM public.customer WHERE email = $1 AND password = $2`,
                 [email, password]
@@ -75,12 +67,31 @@ export async function POST(req: NextRequest) {
             const user = response.rows[0];
             delete user.password;
 
+            const token = jwt.sign(
+                { id: user.id, email: user.email },
+                SECRET_KEY,
+                { expiresIn: '1h' }
+            );
+
             return NextResponse.json({
                 message: 'Login successful',
                 data: user,
+                token,
                 status: 200,
             });
-        } else if (action === 'update') {
+        }
+
+        const tokenValidation = getUserIdFromToken(req);
+        if (!tokenValidation.valid) {
+            return NextResponse.json(
+                { message: tokenValidation.message, status: 401 },
+                { status: 401 }
+            );
+        }
+
+        const userId = tokenValidation.userId;
+
+        if (action === 'update') {
             const response = await pg.query(
                 `UPDATE public.customer
                  SET name = COALESCE($1, name),
@@ -102,12 +113,23 @@ export async function POST(req: NextRequest) {
                 { message: 'User updated successfully', data: response.rows },
                 { status: 200 }
             );
-        } else {
+        }
+
+        if (action === 'delete') {
+            const response = await pg.query(
+                `DELETE FROM public.customer WHERE id = $1 RETURNING *`,
+                [userId]
+            );
             return NextResponse.json(
-                { message: 'Unknown action', status: 400 },
-                { status: 400 }
+                { message: 'User deleted successfully', data: response.rows },
+                { status: 200 }
             );
         }
+
+        return NextResponse.json(
+            { message: 'Unknown action', status: 400 },
+            { status: 400 }
+        );
     } catch (error) {
         console.error('Error:', error);
         return NextResponse.json(
