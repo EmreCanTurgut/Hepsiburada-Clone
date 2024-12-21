@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
 import ProductsFilter from './ProductsFilter';
+import { DUMMY_PRODUCTS } from '@/data/Products';
 
 export interface Product {
     id: number;
@@ -8,28 +9,29 @@ export interface Product {
     price: number;
     product_image: string;
     category: string;
-    discount: string;
+    discount: string | number | null | undefined;
 }
 
 const Products = () => {
-    const [products, setProducts] = useState<Product[]>([]);
+    const [products, setProducts] = useState<Product[]>(DUMMY_PRODUCTS);
     const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
     const [sortOption, setSortOption] = useState<string>('discount');
     const [categoryFilter, setCategoryFilter] = useState<string>('all');
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            const response = await fetch('http://localhost:3000/api/product', {
-                method: 'POST',
-                body: JSON.stringify({ action: 'getProducts' }),
-                headers: { 'Content-Type': 'application/json' },
-            });
-            const data = await response.json();
-            setProducts(data.data);
-            setFilteredProducts(data.data);
-        };
-        fetchProducts();
-    }, []);
+    // useEffect(() => {
+    //     const fetchProducts = async () => {
+    //         const response = await fetch('http://localhost:3000/api/product', {
+    //             method: 'POST',
+    //             body: JSON.stringify({ action: 'getProducts' }),
+    //             headers: { 'Content-Type': 'application/json' },
+    //         });
+    //         const data = await response.json();
+    //         console.log(data.data)
+    //         setProducts(data.data);
+    //         setFilteredProducts(data.data);
+    //     };
+    //     fetchProducts();
+    // }, []);
 
     useEffect(() => {
         let filtered = [...products];
@@ -70,7 +72,7 @@ const Products = () => {
                                     image={product.product_image}
                                     price={product.price}
                                     title={product.product_name}
-                                    discountInfo={product.discount}
+                                    discountInfo={typeof product.discount === 'string' ? product.discount : undefined}
                                     label={product.product_name}
                                 />
                             </div>

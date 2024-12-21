@@ -1,4 +1,5 @@
-'use client'
+'use client';
+import Link from 'next/link';
 import React, { useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 
@@ -12,7 +13,9 @@ const Nav = () => {
     return (
         <nav className="bg-gray-200 text-white px-12 py-2 flex justify-between items-center ">
             <div className="text-xl font-bold text-orange-500">Hepsiburada</div>
-
+            <div>
+                //TODO MURAT
+            </div>
             <div className="relative">
                 <button onClick={toggleMenu} className="focus:outline-none">
                     <FaUserCircle className="w-8 h-8 text-gray-600 hover:text-gray-800 transition-all duration-150" />
