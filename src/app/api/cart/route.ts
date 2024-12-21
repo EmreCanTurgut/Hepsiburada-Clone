@@ -4,7 +4,6 @@ import jwt from 'jsonwebtoken';
 
 const SECRET_KEY = process.env.JWT_SECRET!;
 
-// Token'dan customer_id alma fonksiyonu
 function getCustomerIdFromToken(req: NextRequest): {
     valid: boolean;
     customerId?: number;
@@ -27,7 +26,7 @@ function getCustomerIdFromToken(req: NextRequest): {
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { action, cart_id, product_id, quantity } = body;
+        const { action, cart_id, product_id, quantity, coupon_code } = body;
 
         const pg = await pool.connect();
 
@@ -38,7 +37,6 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Token'dan customer_id al
         const tokenValidation = getCustomerIdFromToken(req);
         if (!tokenValidation.valid) {
             return NextResponse.json(
@@ -51,7 +49,7 @@ export async function POST(req: NextRequest) {
         if (action === 'addToCart') {
             const response = await pg.query(
                 `INSERT INTO public.cart (cart_id, product_id, quantity, customer_id)
-         VALUES ($1, $2, $3, $4) RETURNING *`,
+                 VALUES ($1, $2, $3, $4) RETURNING *`,
                 [cart_id, product_id, quantity, customer_id]
             );
             return NextResponse.json(
@@ -69,8 +67,30 @@ export async function POST(req: NextRequest) {
                     { status: 404 }
                 );
             }
+
+            let total = response.rows.reduce(
+                (sum, item) => sum + item.quantity * item.price,
+                0
+            );
+            let discount = 0;
+
+            if (coupon_code === 'SEPETTE100') {
+                discount = 100;
+                total = Math.max(0, total - discount);
+            }
+
+            if (coupon_code === 'SEPETTE50') {
+                discount = 50;
+                total = Math.max(0, total - discount);
+            }
+
             return NextResponse.json(
-                { message: 'Cart fetched successfully', data: response.rows },
+                {
+                    message: 'Cart fetched successfully',
+                    data: response.rows,
+                    total: total,
+                    discount: discount,
+                },
                 { status: 200 }
             );
         } else if (action === 'updateCart') {
