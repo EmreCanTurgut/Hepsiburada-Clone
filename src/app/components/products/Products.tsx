@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
+import ProductsFilter from './ProductsFilter';
 
 export interface Product {
     id: number;
@@ -12,6 +13,9 @@ export interface Product {
 
 const Products = () => {
     const [products, setProducts] = useState<Product[]>([]);
+    const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+    const [sortOption, setSortOption] = useState<string>('discount');
+    const [categoryFilter, setCategoryFilter] = useState<string>('all');
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -22,30 +26,57 @@ const Products = () => {
             });
             const data = await response.json();
             setProducts(data.data);
+            setFilteredProducts(data.data);
         };
         fetchProducts();
     }, []);
+
+    useEffect(() => {
+        let filtered = [...products];
+
+        if (categoryFilter !== 'all') {
+            filtered = filtered.filter(
+                (product) => product.category === categoryFilter
+            );
+        }
+
+        if (sortOption === 'price') {
+            filtered.sort((a, b) => b.price - a.price); 
+        } else if (sortOption === 'discount') {
+            filtered.sort((a, b) => a.price - b.price); 
+        }
+
+        setFilteredProducts(filtered);
+    }, [sortOption, categoryFilter, products]);
 
     return (
         <div className="p-4">
             {products.length === 0 && <div>Loading...</div>}
             {products.length > 0 && (
-                <div className="flex flex-wrap justify-center gap-5">
-                    {products.map((product: Product) => (
-                        <div
-                            key={product.id}
-                            className="flex-[1_1_21%] max-w-[21%] min-w-[250px]"
-                        >
-                            <ProductCard
-                                image={product.product_image}
-                                price={product.price}
-                                title={product.product_name}
-                                discountInfo={product.discount}
-                                label={product.product_name}
-                            />
-                        </div>
-                    ))}
-                </div>
+                <>
+                    <ProductsFilter
+                        sortOption={sortOption}
+                        setSortOption={setSortOption}
+                        categoryFilter={categoryFilter}
+                        setCategoryFilter={setCategoryFilter}
+                    />
+                    <div className="flex flex-wrap justify-center gap-5">
+                        {filteredProducts.map((product: Product) => (
+                            <div
+                                key={product.id}
+                                className="flex-[1_1_21%] max-w-[21%] min-w-[250px]"
+                            >
+                                <ProductCard
+                                    image={product.product_image}
+                                    price={product.price}
+                                    title={product.product_name}
+                                    discountInfo={product.discount}
+                                    label={product.product_name}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </>
             )}
         </div>
     );
