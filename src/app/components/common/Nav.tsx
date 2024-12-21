@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import React, { useState } from 'react';
-import { FaUserCircle } from 'react-icons/fa';
+
 
 const Nav = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -33,7 +33,7 @@ const Nav = () => {
                         {/*EMRE Tam Buraya sepet logosu koyulcak ve sepet modalı açma eklencek */}
                     </button>
                     <button onClick={toggleMenu} className="focus:outline-none">
-                        <FaUserCircle className="w-8 h-8 text-gray-600 hover:text-gray-800 transition-all duration-150" />
+                        <div className="w-8 h-8 text-gray-600 hover:text-gray-800 transition-all duration-150" />
                     </button>
                 </div>
                 {/* aşağıdaki linklerde ona göre düzenlencek */}
