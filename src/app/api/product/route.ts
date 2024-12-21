@@ -77,6 +77,12 @@ export async function POST(req: NextRequest) {
                 },
                 { status: 200 }
             );
+        } else if (action === 'getProducts') {
+            const response = await pg.query('SELECT * FROM public.products');
+            return NextResponse.json({
+                message: 'post fetched succesfully',
+                data: response.rows,
+            });
         } else {
             return NextResponse.json(
                 { message: 'Unknown action', status: 400 },
