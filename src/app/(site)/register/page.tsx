@@ -7,42 +7,67 @@ import { useDispatch, useSelector } from "react-redux";
 const Home: React.FC = () => {
   const dispatch = useDispatch();
   const register = useSelector((state: RootState) => state.register);
+
   const [PhoneNumber, setPhoneNumber] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [errors, setErrors] = useState({
+    PhoneNumber: false,
+    name: false,
+    password: false,
+    email: false,
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!PhoneNumber || !name || !password || !email) {
-      alert("Lütfen tüm alanları doldurun.");
+    const newErrors = {
+      PhoneNumber: !PhoneNumber,
+      name: !name,
+      password: !password,
+      email: !email,
+    };
+
+    setErrors(newErrors);
+
+    // Eğer herhangi bir alan boşsa form gönderilmesin.
+    if (Object.values(newErrors).some((error) => error)) {
+      
       return;
     }
+
+    // Tüm alanlar doluysa devam et
+    await KayıtOl();
     alert("Form başarıyla gönderildi!");
   };
 
-  const nameChangeHandler = (e: any) => {
+  const nameChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(registerSlice.actions.userNameChangeHander(e.currentTarget.value));
     setName(e.currentTarget.value);
   };
-  const PhoneNumberChangeHandler = (e: any) => {
+
+  const PhoneNumberChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(
       registerSlice.actions.userPhoneNumberChangeHandler(e.currentTarget.value)
     );
     setPhoneNumber(e.currentTarget.value);
   };
-  const PasswordChangeHandler = (e: any) => {
+
+  const PasswordChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(
       registerSlice.actions.userPasswordChangeHandler(e.currentTarget.value)
     );
     setPassword(e.currentTarget.value);
   };
-  const EmailChangeHandler = (e: any) => {
+
+  const EmailChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(
       registerSlice.actions.userEmailChangeHandler(e.currentTarget.value)
     );
     setEmail(e.currentTarget.value);
   };
+
   const KayıtOl = async () => {
     const response = await fetch("http://localhost:3000/api/customer", {
       method: "POST",
@@ -65,7 +90,7 @@ const Home: React.FC = () => {
           hepsiburada
         </h1>
         <form onSubmit={handleSubmit}>
-          {/* Telefon Numarası veya E-posta */}
+          {/* Telefon */}
           <div className="mb-4">
             <label
               htmlFor="PhoneNumber"
@@ -77,7 +102,7 @@ const Home: React.FC = () => {
               type="text"
               id="PhoneNumber"
               className={`w-full px-4 py-2 border ${
-                !PhoneNumber
+                errors.PhoneNumber
                   ? "border-red-500 bg-red-50"
                   : "border-gray-300 bg-white"
               } rounded focus:outline-none focus:ring-2 focus:ring-orange-500`}
@@ -85,7 +110,7 @@ const Home: React.FC = () => {
               value={PhoneNumber}
               onChange={PhoneNumberChangeHandler}
             />
-            {!PhoneNumber && (
+            {errors.PhoneNumber && (
               <p className="mt-1 text-sm text-red-600">
                 Bu alan boş bırakılamaz.
               </p>
@@ -104,13 +129,15 @@ const Home: React.FC = () => {
               type="text"
               id="name"
               className={`w-full px-4 py-2 border ${
-                !name ? "border-red-500 bg-red-50" : "border-gray-300 bg-white"
+                errors.name
+                  ? "border-red-500 bg-red-50"
+                  : "border-gray-300 bg-white"
               } rounded focus:outline-none focus:ring-2 focus:ring-orange-500`}
               placeholder="İsminizi girin"
               value={name}
               onChange={nameChangeHandler}
             />
-            {!name && (
+            {errors.name && (
               <p className="mt-1 text-sm text-red-600">
                 Bu alan boş bırakılamaz.
               </p>
@@ -129,7 +156,7 @@ const Home: React.FC = () => {
               type="password"
               id="password"
               className={`w-full px-4 py-2 border ${
-                !password
+                errors.password
                   ? "border-red-500 bg-red-50"
                   : "border-gray-300 bg-white"
               } rounded focus:outline-none focus:ring-2 focus:ring-orange-500`}
@@ -137,7 +164,7 @@ const Home: React.FC = () => {
               value={password}
               onChange={PasswordChangeHandler}
             />
-            {!password && (
+            {errors.password && (
               <p className="mt-1 text-sm text-red-600">
                 Bu alan boş bırakılamaz.
               </p>
@@ -156,13 +183,15 @@ const Home: React.FC = () => {
               type="email"
               id="email"
               className={`w-full px-4 py-2 border ${
-                !email ? "border-red-500 bg-red-50" : "border-gray-300 bg-white"
+                errors.email
+                  ? "border-red-500 bg-red-50"
+                  : "border-gray-300 bg-white"
               } rounded focus:outline-none focus:ring-2 focus:ring-orange-500`}
               placeholder="E-posta adresinizi girin"
               value={email}
               onChange={EmailChangeHandler}
             />
-            {!email && (
+            {errors.email && (
               <p className="mt-1 text-sm text-red-600">
                 Bu alan boş bırakılamaz.
               </p>
@@ -173,7 +202,6 @@ const Home: React.FC = () => {
           <button
             type="submit"
             className="w-full px-4 py-2 font-bold text-white bg-orange-500 rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-opacity-75"
-            onClick={KayıtOl}
           >
             Devam et
           </button>

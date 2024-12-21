@@ -1,4 +1,5 @@
 "use client";
+import BasicModal from "@/app/components/common/modal";
 import registerSlice from "@/store/Slices/registerSlice";
 import { RootState } from "@/store/store";
 import { useRouter } from "next/navigation";
@@ -51,13 +52,17 @@ const LoginPage: React.FC = () => {
       router.replace("/products");
     } catch (error) {}
   };
+  const isforgetpaswordChangeHandler=(e:any)=>{
+    e.preventDefault()
+    dispatch(registerSlice.actions.isForgetPasswordModuleOpenChangeHandler(true))
+  }
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
         <h1 className="text-3xl font-bold text-center text-orange-500 mb-6">
           hepsiburada
         </h1>
-
+            <BasicModal/>
         <div className="flex border-b mb-4">
           <h2 className="text-align: center">Giriş yap</h2>
         </div>
@@ -105,9 +110,11 @@ const LoginPage: React.FC = () => {
           </div>
 
           <div className="mb-4 text-right">
-            <a href="#" className="text-sm text-orange-500">
+            <button className="text-sm text-orange-500"
+            onClick={isforgetpaswordChangeHandler}
+            >
               Şifremi unuttum
-            </a>
+            </button>
           </div>
 
           <button
