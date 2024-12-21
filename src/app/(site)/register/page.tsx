@@ -1,11 +1,12 @@
 "use client";
 import registerSlice from "@/store/Slices/registerSlice";
+import { RootState } from "@/store/store";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const Home: React.FC = () => {
   const dispatch = useDispatch();
-  const register = useSelector((state: any) => state.register);
+  const register = useSelector((state: RootState) => state.register);
   const [PhoneNumber, setPhoneNumber] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");

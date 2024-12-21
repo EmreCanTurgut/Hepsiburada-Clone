@@ -8,6 +8,9 @@ const registerSlice=createSlice({
         userPhoneNumber:"",
         userPassword:"",
         userEmail:"",
+        //login
+        emailCheck:"",
+        passwordCheck:"",
     },
     reducers:{
     userNameChangeHander(state,action){
@@ -20,6 +23,12 @@ const registerSlice=createSlice({
     },
     userEmailChangeHandler(state,action){
         state.userEmail=action.payload;
+    },
+    emailCheckChangeHandler(state,action){
+        state.emailCheck=action.payload;
+    },
+    passwordCheckChangeHandler(state,action){
+        state.passwordCheck=action.payload;
     }
 
     }
