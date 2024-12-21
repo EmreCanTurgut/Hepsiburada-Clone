@@ -59,6 +59,7 @@ export async function POST(req: NextRequest) {
                 { status: 200 }
             );
         } else if (action === 'login') {
+            console.log(email, password);
             const response = await pg.query(
                 `SELECT * FROM public.customer WHERE email = $1 AND password = $2`,
                 [email, password]
@@ -74,10 +75,11 @@ export async function POST(req: NextRequest) {
             const user = response.rows[0];
             delete user.password;
 
-            return NextResponse.json(
-                { message: 'Login successful', data: user },
-                { status: 200 }
-            );
+            return NextResponse.json({
+                message: 'Login successful',
+                data: user,
+                status: 200,
+            });
         } else if (action === 'update') {
             const response = await pg.query(
                 `UPDATE public.customer
