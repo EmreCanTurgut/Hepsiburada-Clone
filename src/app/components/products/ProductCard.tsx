@@ -30,12 +30,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
     return (
         <div
-            className="border rounded-lg shadow-sm p-4 bg-white w-64 h-[380px]"
+            className="border rounded-lg shadow-sm bg-white w-64 h-[310px]"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
             {label && (
-                <div className="text-sm bg-orange-500 text-white px-2 py-1 rounded">
+                <div className="text-sm bg-orange-500  text-white px-2 py-1 rounded-tl-lg rounded-tr-lg">
                     {label}
                 </div>
             )}
@@ -54,17 +54,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     </span>
                 )}
             </div>
-            {discountInfo && (
-                <div className="text-sm text-green-500 mt-1">
-                    {discountInfo}
-                </div>
-            )}
+
             {isHovered && (
                 <motion.button
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 40, opacity: 1 }}
                     transition={{ duration: 0.2 }}
-                    className="mt-3 bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 w-full"
+                    className="mt-3 bg-orange-500 text-white py-2 px-2 rounded hover:bg-orange-600 w-full flex justify-center mx-"
                 >
                     Sepete Ekle
                 </motion.button>
